@@ -3,7 +3,7 @@ import { TickTockMove } from './tests/PACs/TickTockMove';
 import { TickTockStop } from './tests/PACs/TickTockStop';
 
 
-const tickTock = new TickTockStop();
+const tickTock = new TickTock();
 
 function main() {
     if (tickTock.tick()) {
