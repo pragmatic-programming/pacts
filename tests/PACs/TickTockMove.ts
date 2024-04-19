@@ -1,4 +1,4 @@
-import { Location, PragmaticActionClass } from "../src/PragmaticActionChart";
+import { Location, PragmaticActionClass } from "../../src/PragmaticActionChart";
 
 export class TickTockMove extends PragmaticActionClass {
 

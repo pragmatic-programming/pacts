@@ -1,6 +1,6 @@
-import { TickTock } from './test/TickTock';
-import { TickTockMove } from './test/TickTockMove';
-import { TickTockStop } from './test/TickTockStop';
+import { TickTock } from './tests/PACs/TickTock';
+import { TickTockMove } from './tests/PACs/TickTockMove';
+import { TickTockStop } from './tests/PACs/TickTockStop';
 
 
 const tickTock = new TickTockStop();

@@ -1,6 +1,6 @@
-import { Location, PragmaticActionClass } from "../src/PragmaticActionChart";
+import { Location, PragmaticActionClass } from "../../src/PragmaticActionChart";
 
-export class TickTock extends PragmaticActionClass {
+export class TickTockStop extends PragmaticActionClass {
 
     public init(): Location {
         return this.location(
@@ -18,8 +18,8 @@ export class TickTock extends PragmaticActionClass {
             () => {
                 console.log("Tock");
             },
-            () => {   
-                return this.init();
+            () => { 
+                return this.halt();   
             }
         );
     }
