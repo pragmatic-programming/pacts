@@ -1,6 +1,6 @@
-import { ActionFn, Location, PragmaticActionClass } from "../../src/PragmaticActionChart";
+import { ActionFn, Location, PragmaticActionChart } from "../../src/PragmaticActionChart";
 
-export class TickTockWait extends PragmaticActionClass {
+export class TickTockWait extends PragmaticActionChart {
 
     public static _counter = 0;
     public static _initAction: ActionFn = () => { console.log("Tick"); this._counter++; };

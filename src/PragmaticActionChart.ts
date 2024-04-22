@@ -3,7 +3,7 @@ export type ActionFn = () => void;
 export type Location = [ActionFn, ControlFn] | null;
 export type LocationFn = () => Location;
 
-export class PragmaticActionClass {
+export class PragmaticActionChart {
 
     // Since fields are not listed in the proto object, we can just simply list all member that should be ignored.
     // If someone comes up with an automated way to detect all super fields, we can remove this list.
@@ -36,8 +36,8 @@ export class PragmaticActionClass {
 
         for (let member in this) {
             if (typeof this[member] === "function") {
-                if (!PragmaticActionClass._ignoreMember.includes(member)) {
-                    if (PragmaticActionClass._ignorePrefix.some(prefix => member.startsWith(prefix))) {
+                if (!PragmaticActionChart._ignoreMember.includes(member)) {
+                    if (PragmaticActionChart._ignorePrefix.some(prefix => member.startsWith(prefix))) {
                         continue;
                     }
                     if (member in protoParent) {
@@ -64,7 +64,7 @@ export class PragmaticActionClass {
         this._terminated = false;
     }
 
-    public _tick(): boolean {
+    public _tick(callback?: () => void): boolean {
         let control = this._current![1];
         let location = control();
         if (this._terminated) {
@@ -78,6 +78,10 @@ export class PragmaticActionClass {
         action();
         this._current = location;
 
+        if (callback) {
+            callback();
+        }
+
         return true;
     }
 
@@ -85,6 +89,13 @@ export class PragmaticActionClass {
         return [action, control];
     }
 
+    protected _action(action: ActionFn): Location {
+        return this._location(action, this._root());
+    }
+
+    protected _control(location: ControlFn): Location {
+        return this._location(this._noAction, location);
+    }
     
     protected _defer(location: Location): Location {
         if (location === null) {
