@@ -5,6 +5,7 @@ import { TickTockMove } from "../PACs/TickTockMove";
 import { TickTockHalt } from "../PACs/TickTockHalt";
 import { TickTockStop } from "../PACs/TickTockStop";
 import { TickTockSelf } from "../PACs/TickTockSelf";
+import { TickTockSelfAPI } from "../PACs/TickTockSelfAPI";
 
 test("e01ticktock", () => {
     let clock: number = 0;
@@ -94,6 +95,25 @@ test("e05ticktockself", () => {
     TickTockSelf.tockAction = tock;
 
     const tickTock = new TickTockSelf();
+
+    tickTock.tick();
+    expect(clock).toBe(1);
+    tickTock.tick();
+    expect(clock).toBe(0);
+    tickTock.tick();
+    expect(clock).toBe(-1);
+    tickTock.tick();
+    expect(clock).toBe(-2);
+});
+
+test("e06ticktockselfapi", () => {
+    let clock: number = 0;
+    let tick: ActionFn = () => { clock++; };
+    let tock: ActionFn = () => { clock--; };
+    TickTockSelfAPI.initAction = tick;
+    TickTockSelfAPI.tockAction = tock;
+
+    const tickTock = new TickTockSelfAPI();
 
     tickTock.tick();
     expect(clock).toBe(1);

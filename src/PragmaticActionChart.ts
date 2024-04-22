@@ -7,7 +7,7 @@ export class PragmaticActionClass {
 
     // Since fields are not listed in the proto object, we can just simply list all member that should be ignored.
     // If someone comes up with an automated way to detect all super fields, we can remove this list.
-    protected static ignoreMember: string[] = ["constructor", "inferLocations", "reset", "tick", "location", "defer", "transition", "noAction", "halt"];
+    protected static ignoreMember: string[] = ["constructor", "inferLocations", "reset", "tick", "location", "defer", "transition", "noAction", "halt", "self"];
 
     protected locations: Location[] = [];
     protected current: Location | null = null;
@@ -91,5 +91,9 @@ export class PragmaticActionClass {
 
     protected halt(): ControlFn {
         return () => null; 
+    }
+
+    protected self(): ControlFn {
+        return () => this.current;
     }
 }
