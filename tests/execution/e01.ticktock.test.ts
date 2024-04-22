@@ -1,13 +1,14 @@
 import exp from "constants";
-import { Action } from "../../src/PragmaticActionChart";
+import { ActionFn } from "../../src/PragmaticActionChart";
 import { TickTock } from "../PACs/TickTock";
 import { TickTockMove } from "../PACs/TickTockMove";
+import { TickTockHalt } from "../PACs/TickTockHalt";
 import { TickTockStop } from "../PACs/TickTockStop";
 
 test("e01ticktock", () => {
     let clock: number = 0;
-    let tick: Action = () => { clock++; };
-    let tock: Action = () => { clock--; };
+    let tick: ActionFn = () => { clock++; };
+    let tock: ActionFn = () => { clock--; };
     TickTock.initAction = tick;
     TickTock.tockAction = tock;
 
@@ -25,8 +26,8 @@ test("e01ticktock", () => {
 
 test("e02ticktockmove", () => {
     let clock: number = 0;
-    let tick: Action = () => { clock++; };
-    let tock: Action = () => { clock--; };
+    let tick: ActionFn = () => { clock++; };
+    let tock: ActionFn = () => { clock--; };
     TickTockMove.initAction = tick;
     TickTockMove.tockAction = tock;
 
@@ -42,14 +43,14 @@ test("e02ticktockmove", () => {
     expect(clock).toBe(4);
 });
 
-test("e03ticktockstop", () => {
+test("e03ticktockhalt", () => {
     let clock: number = 0;
-    let tick: Action = () => { clock++; };
-    let tock: Action = () => { clock--; };
+    let tick: ActionFn = () => { clock++; };
+    let tock: ActionFn = () => { clock--; };
     TickTockStop.initAction = tick;
     TickTockStop.tockAction = tock;
 
-    const tickTock = new TickTockStop();
+    const tickTock = new TickTockHalt();
 
     tickTock.tick();
     expect(clock).toBe(1);

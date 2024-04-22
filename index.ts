@@ -1,9 +1,10 @@
 import { TickTock } from './tests/PACs/TickTock';
 import { TickTockMove } from './tests/PACs/TickTockMove';
 import { TickTockStop } from './tests/PACs/TickTockStop';
+import { TickTockRestart } from './tests/PACs/TickTockRestart';
 
 
-const tickTock = new TickTock();
+const tickTock = new TickTockRestart();
 
 function main() {
     if (tickTock.tick()) {

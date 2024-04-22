@@ -1,8 +1,13 @@
-export type Control = () => Location;
-export type Action = () => void;
-export type Location = [Action, () => Location] | null;
+export type ControlFn = () => Location;
+export type ActionFn = () => void;
+export type Location = [ActionFn, ControlFn] | null;
+export type LocationFn = () => Location;
 
 export class PragmaticActionClass {
+
+    // Since fields are not listed in the proto object, we can just simply list all member that should be ignored.
+    // If someone comes up with an automated way to detect all super fields, we can remove this list.
+    protected static ignoreMember: string[] = ["constructor", "inferLocations", "reset", "tick", "location", "defer", "noAction", "halt"];
 
     protected locations: Location[] = [];
     protected current: Location | null = null;
@@ -29,13 +34,15 @@ export class PragmaticActionClass {
         }
 
         for (let member in this) {
-            console.log(`member ${member} ${typeof this[member]}`);
+            console.log(`${member} in ${this.constructor.name}:${typeof this[member]}`)
+            
             if (typeof this[member] === "function") {
-                if (!(member in protoParent)) {
-                    console.log(`found member ${member} ${typeof this[member]}`);
-                    let location: Location = (this[member] as Function)();
-                    // console.log(`location type ${location}`);
-                    this.locations.push(location);
+                if (!PragmaticActionClass.ignoreMember.includes(member)) {
+                    if (member in protoParent) {
+                        throw new Error("Method " + member + " is defined in the proto class. This cannot be a location.");
+                    }
+                    let potential: Location = (this[member] as Function)();
+                    this.locations.push(potential);
                 }
             }
         }
@@ -60,9 +67,12 @@ export class PragmaticActionClass {
         return true;
     }
 
-    protected location(action: Action, control: Control): Location {
+    protected location(action: ActionFn, control: ControlFn): Location {
         return [action, control];
     }
+
+    protected noAction: ActionFn = () => {};
+    protected halt: Location = null;
 
     public defer(location: Location): Location {
         if (location === null) {
@@ -71,9 +81,5 @@ export class PragmaticActionClass {
         
         let deferControl = location[1]();
         return deferControl;
-    }
-
-    public halt(): Location {
-        return null;
     }
 }
