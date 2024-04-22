@@ -6,14 +6,14 @@ export class TickTockSelf extends PragmaticActionClass {
     public static tockAction: ActionFn = () => { console.log("Tock"); };
 
     public init(): Location {
-        return this.location(
+        return this._location(
             TickTockSelf.initAction,
-            this.transition(this.tock())
+            this._transition(this.tock())
         );
     }
 
     public tock(): Location {
-        return this.location(
+        return this._location(
             TickTockSelf.tockAction,
             () => this.tock() // != this.transition(this.tock())
         );

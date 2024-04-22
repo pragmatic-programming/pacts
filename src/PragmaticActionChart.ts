@@ -7,29 +7,30 @@ export class PragmaticActionClass {
 
     // Since fields are not listed in the proto object, we can just simply list all member that should be ignored.
     // If someone comes up with an automated way to detect all super fields, we can remove this list.
-    protected static ignoreMember: string[] = ["constructor", "inferLocations", "reset", "tick", "location", "defer", "transition", "noAction", "halt", "self", "root"];
+    protected static ignoreMember: string[] = ["constructor", "_inferLocations", "_reset", "_tick", 
+        "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root"];
 
     protected locations: Location[] = [];
     protected current: Location | null = null;
 
     constructor() {
-        if (!("tick" in this)) {
+        if (!("_tick" in this)) {
             throw new Error("PragmaticActionClass requires a tick method");
         }
 
-        this.inferLocations();
+        this._inferLocations();
 
         if (this.locations.length < 1) {
             throw new Error("PragmaticActionClass requires at least one location (method)");
         }
 
-        this.reset();
+        this._reset();
     }
 
-    protected inferLocations(): void {
+    protected _inferLocations(): void {
         let proto = Object.getPrototypeOf(this);
         let protoParent = Object.getPrototypeOf(proto);
-        while (!("tick" in protoParent)) {
+        while (!("_tick" in protoParent)) {
             protoParent = Object.getPrototypeOf(protoParent);
         }
 
@@ -46,11 +47,11 @@ export class PragmaticActionClass {
         }
     }
 
-    public reset() {
+    public _reset() {
         this.current = [() => {}, () => this.locations[0]];
     }
 
-    public tick(): boolean {
+    public _tick(): boolean {
         let control = this.current![1];
         let location = control();
         if (location === null) {
@@ -64,12 +65,12 @@ export class PragmaticActionClass {
         return true;
     }
 
-    protected location(action: ActionFn, control: ControlFn): Location {
+    protected _location(action: ActionFn, control: ControlFn): Location {
         return [action, control];
     }
 
     
-    protected defer(location: Location): Location {
+    protected _defer(location: Location): Location {
         if (location === null) {
             throw new Error("defer requires a valid location!");
         }
@@ -78,23 +79,23 @@ export class PragmaticActionClass {
         return deferControl;
     }
 
-    protected transition(location: Location): LocationFn {
+    protected _transition(location: Location): LocationFn {
         return () => location;
     }
 
-    protected noAction(): ActionFn {
+    protected _noAction(): ActionFn {
         return () => {};
     }
 
-    protected halt(): ControlFn {
+    protected _halt(): ControlFn {
         return () => null; 
     }
 
-    protected self(): ControlFn {
+    protected _self(): ControlFn {
         return () => this.current;
     }
 
-    protected root(): ControlFn {
-        return () => this.defer(this.locations[0]);
+    protected _root(): ControlFn {
+        return () => this._defer(this.locations[0]);
     }
 }

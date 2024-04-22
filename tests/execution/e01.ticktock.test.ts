@@ -16,13 +16,13 @@ test("e01ticktock", () => {
 
     const tickTock = new TickTock();
 
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
 });
 
@@ -35,13 +35,13 @@ test("e02ticktockmove", () => {
 
     const tickTock = new TickTockMove();
 
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(2);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(3);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(4);
 });
 
@@ -54,16 +54,16 @@ test("e03ticktockhalt", () => {
 
     const tickTock = new TickTockHalt();
 
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
     
-    expect(tickTock.tick()).toBe(false);
+    expect(tickTock._tick()).toBe(false);
 });
 
 test("e04ticktockstop", () => {
@@ -75,16 +75,16 @@ test("e04ticktockstop", () => {
 
     const tickTock = new TickTockStop();
 
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
     
-    expect(tickTock.tick()).toBe(false);
+    expect(tickTock._tick()).toBe(false);
 });
 
 test("e05ticktockself", () => {
@@ -96,13 +96,13 @@ test("e05ticktockself", () => {
 
     const tickTock = new TickTockSelf();
 
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(-1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(-2);
 });
 
@@ -115,12 +115,12 @@ test("e06ticktockselfapi", () => {
 
     const tickTock = new TickTockSelfAPI();
 
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(0);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(-1);
-    tickTock.tick();
+    tickTock._tick();
     expect(clock).toBe(-2);
 });

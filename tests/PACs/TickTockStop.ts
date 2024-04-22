@@ -6,7 +6,7 @@ export class TickTockStop extends PragmaticActionClass {
     public static tockAction: ActionFn = () => { console.log("Tock"); };
 
     public init(): Location {
-        return this.location(
+        return this._location(
             TickTockStop.initAction,
             () => {   
                 return this.tock();
@@ -15,7 +15,7 @@ export class TickTockStop extends PragmaticActionClass {
     }
 
     public tock(): Location {
-        return this.location(
+        return this._location(
             TickTockStop.tockAction,
             () => {   
                 return null;

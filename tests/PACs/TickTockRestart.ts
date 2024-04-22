@@ -6,16 +6,16 @@ export class TickTockRestart extends PragmaticActionClass {
     public static tockAction: ActionFn = () => { console.log("Tock"); };
 
     public init(): Location {
-        return this.location(
+        return this._location(
             TickTockRestart.initAction,
-            this.transition(this.tock())
+            this._transition(this.tock())
         );
     }
 
     public tock(): Location {
-        return this.location(
+        return this._location(
             TickTockRestart.tockAction,
-            this.root()
+            this._root()
         );
     }
 
