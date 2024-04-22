@@ -6,6 +6,7 @@ import { TickTockHalt } from "../PACs/TickTockHalt";
 import { TickTockStop } from "../PACs/TickTockStop";
 import { TickTockSelf } from "../PACs/TickTockSelf";
 import { TickTockSelfAPI } from "../PACs/TickTockSelfAPI";
+import { TickTockWait } from "../PACs/TickTockWait";
 
 test("e01ticktock", () => {
     let clock: number = 0;
@@ -123,4 +124,25 @@ test("e06ticktockselfapi", () => {
     expect(clock).toBe(-1);
     tickTock._tick();
     expect(clock).toBe(-2);
+});
+
+test("e07ticktockwait", () => {
+    let tick: ActionFn = () => { TickTockWait._counter++;  };
+    let tock: ActionFn = () => { TickTockWait._counter--; };
+    TickTockWait._initAction = tick;
+    TickTockWait._tockAction = tock;
+
+    const tickTock = new TickTockWait();
+
+    tickTock._tick();
+    expect(TickTockWait._counter).toBe(1);
+    tickTock._tick();
+    expect(TickTockWait._counter).toBe(2);
+    tickTock._tick();
+    expect(TickTockWait._counter).toBe(3);
+    tickTock._tick();
+    expect(TickTockWait._counter).toBe(2);
+    tickTock._tick();
+
+    expect(tickTock._terminated).toBe(true);
 });

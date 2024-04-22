@@ -8,12 +8,12 @@ export class PragmaticActionClass {
     // Since fields are not listed in the proto object, we can just simply list all member that should be ignored.
     // If someone comes up with an automated way to detect all super fields, we can remove this list.
     protected static _ignoreMember: string[] = ["constructor", "_inferLocations", "_reset", "_tick", 
-        "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root"];
+        "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root", "_term"];
     protected static _ignorePrefix: string[] = ["_"];
 
     protected _locations: Location[] = [];
     protected _current: Location | null = null;
-    protected _terminated: boolean = false;
+    public _terminated: boolean = false;
 
     constructor() {
         if (!("_tick" in this)) {
