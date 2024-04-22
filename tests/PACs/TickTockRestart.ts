@@ -7,7 +7,7 @@ export class TickTockRestart extends PragmaticActionClass {
 
     public init(): Location {
         return this.location(
-            this.noAction,
+            TickTockRestart.initAction,
             this.transition(this.tock())
         );
     }
@@ -15,7 +15,7 @@ export class TickTockRestart extends PragmaticActionClass {
     public tock(): Location {
         return this.location(
             TickTockRestart.tockAction,
-            this.halt()
+            this.root()
         );
     }
 
