@@ -12,6 +12,16 @@ export class PragmaticActionClass {
             throw new Error("PragmaticActionClass requires a tick method");
         }
 
+        this.inferLocations();
+
+        if (this.locations.length < 1) {
+            throw new Error("PragmaticActionClass requires at least one location (method)");
+        }
+
+        this.reset();
+    }
+
+    protected inferLocations(): void {
         let proto = Object.getPrototypeOf(this);
         let protoParent = Object.getPrototypeOf(proto);
         while (!("tick" in protoParent)) {
@@ -24,16 +34,11 @@ export class PragmaticActionClass {
                 if (!(member in protoParent)) {
                     console.log(`found member ${member} ${typeof this[member]}`);
                     let location: Location = (this[member] as Function)();
+                    // console.log(`location type ${location}`);
                     this.locations.push(location);
                 }
             }
         }
-
-        if (this.locations.length < 1) {
-            throw new Error("PragmaticActionClass requires at least one location (method)");
-        }
-
-        this.reset();
     }
 
     public reset() {
