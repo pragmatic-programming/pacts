@@ -17,9 +17,7 @@ export class TickTockStop extends PragmaticActionClass {
     public tock(): Location {
         return this._location(
             TickTockStop.tockAction,
-            () => {   
-                return null;
-            }
+            this._pause()
         );
     }
 

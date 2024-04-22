@@ -7,12 +7,13 @@ export class PragmaticActionClass {
 
     // Since fields are not listed in the proto object, we can just simply list all member that should be ignored.
     // If someone comes up with an automated way to detect all super fields, we can remove this list.
-    protected static ignoreMember: string[] = ["constructor", "_inferLocations", "_reset", "_tick", 
+    protected static _ignoreMember: string[] = ["constructor", "_inferLocations", "_reset", "_tick", 
         "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root"];
-    protected static ignorePrefix: string[] = ["_"];
+    protected static _ignorePrefix: string[] = ["_"];
 
-    protected locations: Location[] = [];
-    protected current: Location | null = null;
+    protected _locations: Location[] = [];
+    protected _current: Location | null = null;
+    protected _terminated: boolean = false;
 
     constructor() {
         if (!("_tick" in this)) {
@@ -21,7 +22,7 @@ export class PragmaticActionClass {
 
         this._inferLocations();
 
-        if (this.locations.length < 1) {
+        if (this._locations.length < 1) {
             throw new Error("PragmaticActionClass requires at least one location (method)");
         }
 
@@ -37,34 +38,38 @@ export class PragmaticActionClass {
 
         for (let member in this) {
             if (typeof this[member] === "function") {
-                if (!PragmaticActionClass.ignoreMember.includes(member)) {
-                    if (PragmaticActionClass.ignorePrefix.some(prefix => member.startsWith(prefix))) {
+                if (!PragmaticActionClass._ignoreMember.includes(member)) {
+                    if (PragmaticActionClass._ignorePrefix.some(prefix => member.startsWith(prefix))) {
                         continue;
                     }
                     if (member in protoParent) {
                         throw new Error("Method " + member + " is defined in the proto class. This cannot be a location.");
                     }
                     let potential: Location = (this[member] as Function)();
-                    this.locations.push(potential);
+                    this._locations.push(potential);
                 }
             }
         }
     }
 
     public _reset() {
-        this.current = [() => {}, () => this.locations[0]];
+        this._current = [() => {}, () => this._locations[0]];
+        this._terminated = false;
     }
 
     public _tick(): boolean {
-        let control = this.current![1];
+        let control = this._current![1];
         let location = control();
-        if (location === null) {
+        if (this._terminated) {
             return false;
+        }
+        if (location === null) {
+            return true;
         }
 
         let action = location[0];
         action();
-        this.current = location;
+        this._current = location;
 
         return true;
     }
@@ -91,15 +96,22 @@ export class PragmaticActionClass {
         return () => {};
     }
 
-    protected _halt(): ControlFn {
+    protected _pause(): ControlFn {
         return () => null; 
     }
 
     protected _self(): ControlFn {
-        return () => this.current;
+        return () => this._current;
     }
 
     protected _root(): ControlFn {
-        return () => this._defer(this.locations[0]);
+        return () => this._defer(this._locations[0]);
+    }
+
+    protected _term(): ControlFn {
+        return () => {
+            this._terminated = true;
+            return null;
+        };
     }
 }

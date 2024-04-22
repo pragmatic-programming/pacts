@@ -84,7 +84,7 @@ test("e04ticktockstop", () => {
     tickTock._tick();
     expect(clock).toBe(0);
     
-    expect(tickTock._tick()).toBe(false);
+    expect(tickTock._tick()).toBe(true);
 });
 
 test("e05ticktockself", () => {
