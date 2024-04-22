@@ -20,16 +20,14 @@ export class PragmaticActionClass {
             throw new Error("PragmaticActionClass requires a tick method");
         }
 
-        this._inferLocations();
-
-        if (this._locations.length < 1) {
-            throw new Error("PragmaticActionClass requires at least one location (method)");
-        }
-
+        // This will only prepare static locations. 
+        // Works fine as long as only static code is used. 
+        // If you want to use instance code, call reset() after the constructor.
         this._reset();
     }
 
     protected _inferLocations(): void {
+        this._locations = [];
         let proto = Object.getPrototypeOf(this);
         let protoParent = Object.getPrototypeOf(proto);
         while (!("_tick" in protoParent)) {
@@ -52,7 +50,16 @@ export class PragmaticActionClass {
         }
     }
 
+    /** 
+     * Infer Locations does only fill in actions of static code if called from the constructor. 
+     * If you want to use instance code in your state machine, you have to call reset() after initialization of the instance.
+     */
     public _reset() {
+        this._inferLocations();
+        if (this._locations.length < 1) {
+            throw new Error("PragmaticActionClass requires at least one location (method)");
+        }
+
         this._current = [() => {}, () => this._locations[0]];
         this._terminated = false;
     }
