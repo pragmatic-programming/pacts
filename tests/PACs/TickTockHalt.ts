@@ -1,13 +1,13 @@
 import { ActionFn, Location, PragmaticActionClass } from "../../src/PragmaticActionChart";
 
-export class TickTockStop extends PragmaticActionClass {
+export class TickTockHalt extends PragmaticActionClass {
 
     public static initAction: ActionFn = () => { console.log("Tick"); };
     public static tockAction: ActionFn = () => { console.log("Tock"); };
 
     public init(): Location {
         return this.location(
-            TickTockStop.initAction,
+            TickTockHalt.initAction,
             () => {   
                 return this.tock();
             }
@@ -16,10 +16,8 @@ export class TickTockStop extends PragmaticActionClass {
 
     public tock(): Location {
         return this.location(
-            TickTockStop.tockAction,
-            () => {   
-                return null;
-            }
+            TickTockHalt.tockAction,
+            this.halt()
         );
     }
 
