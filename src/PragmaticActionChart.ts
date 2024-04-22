@@ -9,6 +9,7 @@ export class PragmaticActionClass {
     // If someone comes up with an automated way to detect all super fields, we can remove this list.
     protected static ignoreMember: string[] = ["constructor", "_inferLocations", "_reset", "_tick", 
         "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root"];
+    protected static ignorePrefix: string[] = ["_"];
 
     protected locations: Location[] = [];
     protected current: Location | null = null;
@@ -37,6 +38,9 @@ export class PragmaticActionClass {
         for (let member in this) {
             if (typeof this[member] === "function") {
                 if (!PragmaticActionClass.ignoreMember.includes(member)) {
+                    if (PragmaticActionClass.ignorePrefix.some(prefix => member.startsWith(prefix))) {
+                        continue;
+                    }
                     if (member in protoParent) {
                         throw new Error("Method " + member + " is defined in the proto class. This cannot be a location.");
                     }
