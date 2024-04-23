@@ -1,6 +1,6 @@
 {
-  "name": "pacts2",
-  "version": "1.0.0",
+  "name": "pacts",
+  "version": "0.1.0",
   "description": "",
   "main": "build/index.js",
   "directories": {
@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "EPL-2.0",
   "devDependencies": {
     "typescript": "^5.4.5",
     "@types/jest": "^29.5.1",
