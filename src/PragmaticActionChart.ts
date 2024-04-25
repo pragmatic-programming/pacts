@@ -12,6 +12,7 @@ export class PragmaticActionChart {
     protected static _ignorePrefix: string[] = ["_"];
 
     protected _locations: Location[] = [];
+    protected _locationNames: string[] = [];
     protected _current: Location | null = null;
     public _terminated: boolean = false;
 
@@ -45,6 +46,7 @@ export class PragmaticActionChart {
                     }
                     let potential: Location = (this[member] as Function)();
                     this._locations.push(potential);
+                    this._locationNames.push(member);
                 }
             }
         }
@@ -83,6 +85,14 @@ export class PragmaticActionChart {
         }
 
         return true;
+    }
+
+    public _getLocations(): [Location, string][] {
+        let locations: [Location, string][] = [];
+        for (let i = 0; i < this._locations.length; i++) {
+            locations.push([this._locations[i], this._locationNames[i]]);
+        }
+        return locations;
     }
 
     protected _location(action: ActionFn, control: ControlFn): Location {

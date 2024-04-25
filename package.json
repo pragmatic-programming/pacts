@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc -d",
+    "watch": "tsc -w",
+    "clean": "rm -rf build",
     "test": "jest"
   },
   "keywords": [],
