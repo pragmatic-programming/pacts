@@ -14,6 +14,8 @@ export class PragmaticActionChart {
     protected _locations: Location[] = [];
     protected _locationNames: string[] = [];
     protected _current: Location | null = null;
+    protected _initialized: boolean = false;
+    
     public _terminated: boolean = false;
 
     constructor() {
@@ -24,7 +26,7 @@ export class PragmaticActionChart {
         // This will only prepare static locations. 
         // Works fine as long as only static code is used. 
         // If you want to use instance code, call reset() after the constructor.
-        this._reset();
+        // this._reset();
     }
 
     protected _inferLocations(): void {
@@ -64,9 +66,14 @@ export class PragmaticActionChart {
 
         this._current = [() => {}, () => this._locations[0]];
         this._terminated = false;
+        this._initialized = true;
     }
 
     public _tick(callback?: () => void): boolean {
+        if (!this._initialized) {
+            this._reset();
+        }
+
         let control = this._current![1];
         let location = control();
         if (this._terminated) {

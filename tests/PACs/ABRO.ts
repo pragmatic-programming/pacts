@@ -3,33 +3,33 @@ import { Await } from "./Await";
 
 export class ABRO extends PragmaticActionChart {
 
-    protected inputA: () => boolean;
-    protected inputB: () => boolean;
-    protected inputR: () => boolean;
-    protected outputO: () => void;
+    protected _inputA: () => boolean;
+    protected _inputB: () => boolean;
+    protected _inputR: () => boolean;
+    protected _outputO: () => void;
 
     constructor(inputA: () => boolean, inputB: () => boolean, inputR: () => boolean, outputO: () => void) {
         super();
-        this.inputA = inputA;
-        this.inputB = inputB;
-        this.inputR = inputR;
-        this.outputO = outputO;
+        this._inputA = inputA;
+        this._inputB = inputB;
+        this._inputR = inputR;
+        this._outputO = outputO;
     }
 
     public awaitAB(): Location {
         return this._fork(
             this._transition(this.doneAB()),
-            new Await(() => { return this.inputA() }, () => { console.log("A"); }),
-            new Await(() => { return this.inputB() }, () => { console.log("B"); }),
+            new Await(this._inputA, () => { console.log("A"); }),
+            new Await(this._inputB, () => { console.log("B"); }),
             // new Await(() => { return this.inputR() }, () => { console.log("R"); this._reset(); console.log("---"); })
         );
     }
 
     public doneAB(): Location {
         return this._location(
-            () => { return this.outputO(); },
+            () => { return this._outputO(); },
             () => { 
-                if (this.inputR()) {
+                if (this._inputR()) {
                     return this.awaitAB();
                 } else {
                     return this._pause()();

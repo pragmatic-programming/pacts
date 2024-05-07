@@ -2,19 +2,19 @@ import { ActionFn, Location, PragmaticActionChart } from "../../src/PragmaticAct
 
 export class Await extends PragmaticActionChart {
 
-    protected unlessFnc: () => boolean;
-    protected doneAction: ActionFn;
+    protected _unlessFnc: () => boolean;
+    protected _doneAction: ActionFn;
 
     constructor(unless: () => boolean, doneAction: ActionFn = () => {}) {
         super();
-        this.unlessFnc = unless;
-        this.doneAction = doneAction;
+        this._unlessFnc = unless;
+        this._doneAction = doneAction;
     }
 
     public await(): Location {
         return this._control(
             () => {   
-                if (this.unlessFnc()) {
+                if (this._unlessFnc()) {
                     return this.done();
                 }
                 return this._pause()();
@@ -23,7 +23,7 @@ export class Await extends PragmaticActionChart {
     }
 
     public done(): Location {
-        return this._location(this.doneAction, this._term());
+        return this._location(this._doneAction, this._term());
     }
 
 }
