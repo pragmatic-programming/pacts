@@ -73,6 +73,9 @@ export class PragmaticActionChart {
             return false;
         }
         if (location === null) {
+            if (callback) {
+                callback();
+            }
             return true;
         }
 
@@ -107,13 +110,17 @@ export class PragmaticActionChart {
         return this._location(this._noAction, location);
     }
     
-    protected _defer(location: Location): Location {
+    protected _delegate(location: Location): Location {
         if (location === null) {
             throw new Error("defer requires a valid location!");
         }
         
         let deferControl = location[1]();
         return deferControl;
+    }
+
+    protected _defer(location: Location): Location {
+        return this._delegate(location);
     }
 
     protected _transition(location: Location): LocationFn {
@@ -142,4 +149,25 @@ export class PragmaticActionChart {
             return null;
         };
     }
+
+    protected _fork(join: LocationFn, ...locations: PragmaticActionChart[]): Location {
+        const action: ActionFn = () => {
+            for (let loc of locations) {
+                loc._tick();
+            }
+        };
+        const control: ControlFn = () => {
+            // action();
+            let term = true;
+            for (let loc of locations) {
+                if (!loc._terminated) {
+                    term = false;
+                    break;
+                }
+            }
+            return term ? join() : this._self()();
+        }
+        return this._location(action, control);
+    }
+
 }
