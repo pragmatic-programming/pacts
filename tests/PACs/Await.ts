@@ -1,4 +1,4 @@
-import { ActionFn, Location, PragmaticActionChart } from "../../src/PragmaticActionChart";
+import { ActionFn, LocationFn, PragmaticActionChart } from "../../src/PragmaticActionChart";
 
 export class Await extends PragmaticActionChart {
 
@@ -11,7 +11,7 @@ export class Await extends PragmaticActionChart {
         this._doneAction = doneAction;
     }
 
-    public await(): Location {
+    public await(): LocationFn {
         return this._control(
             () => {   
                 if (this._unlessFnc()) {
@@ -22,7 +22,7 @@ export class Await extends PragmaticActionChart {
         );
     }
 
-    public done(): Location {
+    public done(): LocationFn {
         return this._location(this._doneAction, this._term());
     }
 

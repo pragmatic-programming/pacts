@@ -1,11 +1,11 @@
-import { ActionFn, Location, PragmaticActionChart } from "../../src/PragmaticActionChart";
+import { ActionFn, LocationFn, PragmaticActionChart } from "../../src/PragmaticActionChart";
 
 export class TickTock extends PragmaticActionChart {
 
     public static initAction: ActionFn = () => { console.log("Tick"); };
     public static tockAction: ActionFn = () => { console.log("Tock"); };
 
-    public init(): Location {
+    public init(): LocationFn {
         return this._location(
             TickTock.initAction,
             () => {   
@@ -14,7 +14,7 @@ export class TickTock extends PragmaticActionChart {
         );
     }
 
-    public tock(): Location {
+    public tock(): LocationFn {
         return this._location(
             TickTock.tockAction,
             () => {   

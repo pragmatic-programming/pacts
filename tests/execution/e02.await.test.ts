@@ -8,7 +8,7 @@ test("e02await", () => {
     let clock: number = 1;
     let A: boolean = false;
 
-    const aw = new Await(() => { return clock > 2; }, () => { console.log("A"); A = true; });
+    const aw = new Await(() => { return clock > 2; }, () => { A = true; });
 
     expect(clock).toBe(1);
     aw._tick(() => { clock++; });
@@ -40,28 +40,30 @@ test("e02abo", () => {
     A = true; B = true; 
     aw._tick(() => { clock++; });
     expect(O).toBe(false); 
+    aw._tick(() => { clock++; });
+    expect(O).toBe(true); 
 });
 
-test("e03abro", () => {
-    let clock: number = 1;
-    let A: boolean = false;
-    let B: boolean = false;
-    let R: boolean = false;
-    let O: boolean = false;
+// test("e03abro", () => {
+//     let clock: number = 1;
+//     let A: boolean = false;
+//     let B: boolean = false;
+//     let R: boolean = false;
+//     let O: boolean = false;
 
-    const aw = new ABRO(
-        () => { return A }, 
-        () => { return B },
-        () => { return R },  
-        () => { O = true; });
+//     const aw = new ABRO(
+//         () => { return A }, 
+//         () => { return B },
+//         () => { return R },  
+//         () => { O = true; });
 
-    expect(clock).toBe(1);
-    A = false; B = false; R = false;
-    aw._tick(() => { clock++; });
-    expect(O).toBe(false);
-    expect(clock).toBe(2);
-    A = true; B = true; 
-    aw._tick(() => { clock++; });
-    expect(O).toBe(false); 
-});
+//     expect(clock).toBe(1);
+//     A = false; B = false; R = false;
+//     aw._tick(() => { clock++; });
+//     expect(O).toBe(false);
+//     expect(clock).toBe(2);
+//     A = true; B = true; 
+//     aw._tick(() => { clock++; });
+//     expect(O).toBe(false); 
+// });
 

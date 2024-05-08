@@ -1,7 +1,7 @@
-export type ControlFn = () => Location;
+export type ControlFn = () => LocationFn;
 export type ActionFn = () => void;
-export type Location = [ActionFn, ControlFn] | null;
-export type LocationFn = () => Location;
+export type LocationPair = [ActionFn, ControlFn];
+export type LocationFn = (() => LocationPair) | null;
 
 export class PragmaticActionChart {
 
@@ -11,9 +11,9 @@ export class PragmaticActionChart {
         "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root", "_term"];
     protected static _ignorePrefix: string[] = ["_"];
 
-    protected _locations: Location[] = [];
+    protected _locations: LocationFn[] = [];
     protected _locationNames: string[] = [];
-    protected _current: Location | null = null;
+    protected _current: LocationFn = null;
     protected _initialized: boolean = false;
     
     public _terminated: boolean = false;
@@ -46,7 +46,7 @@ export class PragmaticActionChart {
                     if (member in protoParent) {
                         throw new Error("Method " + member + " is defined in the proto class. This cannot be a location.");
                     }
-                    let potential: Location = (this[member] as Function)();
+                    let potential: LocationFn = (this[member] as Function)();
                     this._locations.push(potential);
                     this._locationNames.push(member);
                 }
@@ -64,7 +64,7 @@ export class PragmaticActionChart {
             throw new Error("PragmaticActionClass requires at least one location (method)");
         }
 
-        this._current = [() => {}, () => this._locations[0]];
+        this._current = this._location(this._noAction, () => this._locations[0]);
         this._terminated = false;
         this._initialized = true;
     }
@@ -74,21 +74,22 @@ export class PragmaticActionChart {
             this._reset();
         }
 
-        let control = this._current![1];
-        let location = control();
-        if (this._terminated) {
-            return false;
-        }
-        if (location === null) {
+        const targetLocation: LocationFn = this._current!()[1]();
+        const locationFn: LocationFn = targetLocation;
+        if (locationFn === null) {
             if (callback) {
                 callback();
             }
-            return true;
+            return !this._terminated;
         }
-
-        let action = location[0];
-        action();
-        this._current = location;
+        if (this._terminated) {
+            return false;
+        }
+        
+        const locationPair: LocationPair = locationFn();
+        const actionFn: ActionFn = locationPair[0];
+        actionFn();
+        this._current = locationFn;
 
         if (callback) {
             callback();
@@ -97,40 +98,44 @@ export class PragmaticActionChart {
         return true;
     }
 
-    public _getLocations(): [Location, string][] {
-        let locations: [Location, string][] = [];
+    public _getLocations(): [LocationFn, string][] {
+        let locations: [LocationFn, string][] = [];
         for (let i = 0; i < this._locations.length; i++) {
             locations.push([this._locations[i], this._locationNames[i]]);
         }
         return locations;
     }
 
-    protected _location(action: ActionFn, control: ControlFn): Location {
-        return [action, control];
+    protected _location(action: ActionFn, control: ControlFn): LocationFn {
+        return () => [action, control];
     }
 
-    protected _action(action: ActionFn): Location {
+    protected _action(action: ActionFn): LocationFn {
         return this._location(action, this._root());
     }
 
-    protected _control(location: ControlFn): Location {
+    protected _control(location: ControlFn): LocationFn {
         return this._location(this._noAction, location);
     }
     
-    protected _delegate(location: Location): Location {
+    protected _delegate(location: LocationFn): LocationFn {
         if (location === null) {
             throw new Error("defer requires a valid location!");
         }
+        const loc = location();
+        if (loc === null) {
+            throw new Error("defer requires a valid location!");
+        }
         
-        let deferControl = location[1]();
+        let deferControl = loc[1]();
         return deferControl;
     }
 
-    protected _defer(location: Location): Location {
+    protected _defer(location: LocationFn): LocationFn {
         return this._delegate(location);
     }
 
-    protected _transition(location: Location): LocationFn {
+    protected _transition(location: LocationFn): ControlFn {
         return () => location;
     }
 
@@ -157,14 +162,18 @@ export class PragmaticActionChart {
         };
     }
 
-    protected _fork(control: ControlFn, join: LocationFn, ...locations: PragmaticActionChart[]): Location {
+    protected _fork(
+        control: ControlFn, 
+        join: LocationFn, 
+        ...locations: PragmaticActionChart[]): LocationFn 
+    {
         const action: ActionFn = () => {
             for (let loc of locations) {
                 loc._tick();
             }
         };
         const forkControl: ControlFn = () => {
-            const superControl = control();
+            const superControl: LocationFn = control();
             if (superControl !== null) {
                 return superControl;
             }
@@ -176,12 +185,12 @@ export class PragmaticActionChart {
                     break;
                 }
             }
-            return term ? join() : this._self()();
+            return term ? join : this._current;
         }
         return this._location(action, forkControl);
     }
 
-    protected _if(condition: () => boolean, then: Location): ControlFn {
+    protected _if(condition: () => boolean, then: LocationFn): ControlFn {
         return condition() ? () => then : this._pause();
     }
 

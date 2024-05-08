@@ -1,10 +1,10 @@
-import { ActionFn, Location, PragmaticActionChart } from "../../src/PragmaticActionChart";
+import { ActionFn, LocationFn, PragmaticActionChart } from "../../src/PragmaticActionChart";
 
 export class ColorPAC extends PragmaticActionChart {
 
     public currentColor: string = "unknown";
 
-    public select(): Location {
+    public select(): LocationFn {
         return this._control(
             () => {   
                 const r = Math.random();
@@ -13,19 +13,19 @@ export class ColorPAC extends PragmaticActionChart {
         );
     }
 
-    public red(): Location {
+    public red(): LocationFn {
         return this._action(
             () => { this.currentColor="red" },
         );
     }
 
-    public green(): Location {
+    public green(): LocationFn {
         return this._action(
             () => { this.currentColor="green" },
         );
     }
 
-    public blue(): Location {
+    public blue(): LocationFn {
         return this._action(
             () => { this.currentColor="blue" },
         );

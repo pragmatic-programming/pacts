@@ -1,4 +1,4 @@
-import { ActionFn, Location, PragmaticActionChart } from "../../src/PragmaticActionChart";
+import { ActionFn, LocationFn, PragmaticActionChart } from "../../src/PragmaticActionChart";
 import { Await } from "./Await";
 
 export class ABO extends PragmaticActionChart {
@@ -14,16 +14,17 @@ export class ABO extends PragmaticActionChart {
         this._outputO = outputO;
     }
 
-    public awaitAB(): Location {
+    public awaitAB(): LocationFn {
         return this._fork(
             this._pause(),
-            this._transition(this.doneAB()),
+            this.doneAB(),
             new Await(this._inputA, () => { console.log("A"); }),
             new Await(this._inputB, () => { console.log("B"); }),
         );
+        return this._control(this._pause());
     }
 
-    public doneAB(): Location {
+    public doneAB(): LocationFn {
         return this._location(
             () => { return this._outputO(); },
             () => { return this._pause()(); }
