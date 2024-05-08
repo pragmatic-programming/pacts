@@ -2,6 +2,7 @@ import exp from "constants";
 import { ActionFn } from "../../src/PragmaticActionChart";
 import { Await } from "../PACs/Await";
 import { ABRO } from "../PACs/ABRO";
+import { ABO } from "../PACs/ABO";
 
 test("e02await", () => {
     let clock: number = 1;
@@ -20,7 +21,28 @@ test("e02await", () => {
     expect(A).toBe(true);
 });
 
-test("e02abro", () => {
+test("e02abo", () => {
+    let clock: number = 1;
+    let A: boolean = false;
+    let B: boolean = false;
+    let O: boolean = false;
+
+    const aw = new ABO(
+        () => { return A }, 
+        () => { return B },
+        () => { O = true; });
+
+    expect(clock).toBe(1);
+    A = false; B = false;
+    aw._tick(() => { clock++; });
+    expect(O).toBe(false);
+    expect(clock).toBe(2);
+    A = true; B = true; 
+    aw._tick(() => { clock++; });
+    expect(O).toBe(false); 
+});
+
+test("e03abro", () => {
     let clock: number = 1;
     let A: boolean = false;
     let B: boolean = false;
