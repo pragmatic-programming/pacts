@@ -17,25 +17,18 @@ export class ABRO extends PragmaticActionChart {
     }
 
     public awaitAB(): LocationFn {
-        // return this._fork(
-        //     this._if( this._inputR, this.awaitAB()),
-        //     this._transition(this.doneAB()),
-        //     new Await(this._inputA, () => { console.log("A"); }),
-        //     new Await(this._inputB, () => { console.log("B"); }),
-        // );
-        return this._control(this._pause());
+        return this._forkI(
+            this._if(this._inputR, () => this.awaitAB()),
+            () => this.doneAB(),
+            new Await(this._inputA, () => { }),
+            new Await(this._inputB, () => { }),
+        );
     }
 
     public doneAB(): LocationFn {
         return this._location(
             () => { return this._outputO(); },
-            () => { 
-                if (this._inputR()) {
-                    return this.awaitAB();
-                } else {
-                    return this._pause()();
-                }
-            }
+            this._if(this._inputR, () => this.awaitAB())()
         );
     }
 

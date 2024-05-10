@@ -8,7 +8,8 @@ export class PragmaticActionChart {
     // Since fields are not listed in the proto object, we can just simply list all member that should be ignored.
     // If someone comes up with an automated way to detect all super fields, we can remove this list.
     protected static _ignoreMember: string[] = ["constructor", "_inferLocations", "_reset", "_tick", 
-        "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root", "_term"];
+        "_location", "_defer", "_transition", "_noAction", "_halt", "_self", "_root", "_term", "_if", 
+        "_fork", "_forkI"];
     protected static _ignorePrefix: string[] = ["_"];
 
     protected _locations: LocationFn[] = [];
@@ -17,6 +18,7 @@ export class PragmaticActionChart {
     protected _initialized: boolean = false;
     
     public _terminated: boolean = false;
+    public _tickCallback: (() => void) | undefined = undefined;
 
     constructor() {
         if (!("_tick" in this)) {
@@ -69,17 +71,18 @@ export class PragmaticActionChart {
         this._initialized = true;
     }
 
-    public _tick(callback?: () => void): boolean {
+    public _tick(callback: (() => void) | undefined = () => this._tickCallback): boolean {
         if (!this._initialized) {
             this._reset();
+        }
+
+        if (callback) {
+            callback();
         }
 
         const targetLocation: LocationFn = this._current!()[1]();
         const locationFn: LocationFn = targetLocation;
         if (locationFn === null) {
-            if (callback) {
-                callback();
-            }
             return !this._terminated;
         }
         if (this._terminated) {
@@ -90,10 +93,6 @@ export class PragmaticActionChart {
         const actionFn: ActionFn = locationPair[0];
         actionFn();
         this._current = locationFn;
-
-        if (callback) {
-            callback();
-        }
 
         return true;
     }
@@ -162,8 +161,8 @@ export class PragmaticActionChart {
         };
     }
     
-    protected _if(condition: () => boolean, then: LocationFn): ControlFn {
-        return condition() ? () => then : this._pause();
+    protected _if(condition: () => boolean, then: ControlFn): () => ControlFn {
+        return () => condition() ? () => then() : this._pause();
     }
 
     protected _fork(
@@ -195,8 +194,8 @@ export class PragmaticActionChart {
     }
 
     protected _forkI(
-        control: ControlFn, 
-        join: LocationFn, 
+        control: () => ControlFn, 
+        join: ControlFn, 
         ...locations: PragmaticActionChart[]): LocationFn 
     {
         const action: ActionFn = () => {
@@ -205,7 +204,7 @@ export class PragmaticActionChart {
             }
         };
         const forkControl: ControlFn = () => {
-            const superControl: LocationFn = control();
+            const superControl: LocationFn = control()();
             if (superControl !== null) {
                 return superControl;
             }
@@ -219,7 +218,7 @@ export class PragmaticActionChart {
                     break;
                 }
             }
-            return term ? join : null;
+            return term ? join() : null;
         }
         return this._location(action, forkControl);
     }
