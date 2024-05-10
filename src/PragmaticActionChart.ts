@@ -161,6 +161,10 @@ export class PragmaticActionChart {
             return null;
         };
     }
+    
+    protected _if(condition: () => boolean, then: LocationFn): ControlFn {
+        return condition() ? () => then : this._pause();
+    }
 
     protected _fork(
         control: ControlFn, 
@@ -190,8 +194,33 @@ export class PragmaticActionChart {
         return this._location(action, forkControl);
     }
 
-    protected _if(condition: () => boolean, then: LocationFn): ControlFn {
-        return condition() ? () => then : this._pause();
-    }
+    protected _forkI(
+        control: ControlFn, 
+        join: LocationFn, 
+        ...locations: PragmaticActionChart[]): LocationFn 
+    {
+        const action: ActionFn = () => {
+            for (let loc of locations) {
+                loc._tick();
+            }
+        };
+        const forkControl: ControlFn = () => {
+            const superControl: LocationFn = control();
+            if (superControl !== null) {
+                return superControl;
+            }
 
+            action();
+
+            var term = true;
+            for (let loc of locations) {
+                if (!loc._terminated) {
+                    term = false;
+                    break;
+                }
+            }
+            return term ? join : null;
+        }
+        return this._location(action, forkControl);
+    }
 }

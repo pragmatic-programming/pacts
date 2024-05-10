@@ -15,15 +15,12 @@ export class Await extends PragmaticActionChart {
         return this._control(
             () => {   
                 if (this._unlessFnc()) {
-                    return this.done();
+                    this._doneAction();
+                    return this._term()();
                 }
                 return this._pause()();
             }
         );
-    }
-
-    public done(): LocationFn {
-        return this._location(this._doneAction, this._term());
     }
 
 }

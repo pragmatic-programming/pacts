@@ -15,7 +15,7 @@ export class ABO extends PragmaticActionChart {
     }
 
     public awaitAB(): LocationFn {
-        return this._fork(
+        return this._forkI(
             this._pause(),
             this.doneAB(),
             new Await(this._inputA, () => { console.log("A"); }),
