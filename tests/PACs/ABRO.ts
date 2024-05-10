@@ -1,4 +1,4 @@
-import { ActionFn, LocationFn, PragmaticActionChart } from "../../src/PragmaticActionChart";
+import { LocationFn, PragmaticActionChart } from "../../src/PragmaticActionChart";
 import { Await } from "./Await";
 
 export class ABRO extends PragmaticActionChart {

@@ -1,5 +1,5 @@
 import exp from "constants";
-import { ActionFn, PragmaticActionChart } from "../../src/PragmaticActionChart";
+import { PragmaticActionChart } from "../../src/PragmaticActionChart";
 import { ABRO } from "../PACs/ABRO";
 
 function createABRO(): [PragmaticActionChart, 
