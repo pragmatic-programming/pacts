@@ -150,13 +150,14 @@ test("e07ticktockwait", () => {
 
 test("e08ticktockwaitinstance", () => {
     const tickTock = new TickTockWaitInstance();
-    tickTock._reset();
-
+    
     let tick: ActionFn = () => { tickTock._counter++;  };
     let tock: ActionFn = () => { tickTock._counter--; };
     tickTock._initAction = tick;
     tickTock._tockAction = tock;
-
+    
+    tickTock._reset();
+    
     tickTock._tick();
     expect(tickTock._counter).toBe(1);
     tickTock._tick();
