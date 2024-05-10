@@ -4,7 +4,7 @@ import { Await } from "../PACs/Await";
 import { ABRO } from "../PACs/ABRO";
 import { ABO } from "../PACs/ABO";
 
-// test("e02await", () => {
+// test("e02.00.await", () => {
 //     let clock: number = 1;
 //     let A: boolean = false;
 
@@ -21,7 +21,7 @@ import { ABO } from "../PACs/ABO";
 //     expect(A).toBe(true);
 // });
 
-test("e02abo", () => {
+test("e02.01.abo", () => {
     let clock: number = 1;
     let A: boolean = false;
     let B: boolean = false;
@@ -44,7 +44,7 @@ test("e02abo", () => {
     expect(O).toBe(true); 
 });
 
-// test("e03abro", () => {
+// test("e02.02.abro", () => {
 //     let clock: number = 1;
 //     let A: boolean = false;
 //     let B: boolean = false;

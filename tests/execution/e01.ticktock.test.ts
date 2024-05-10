@@ -9,7 +9,7 @@ import { TickTockSelfAPI } from "../PACs/TickTockSelfAPI";
 import { TickTockWait } from "../PACs/TickTockWait";
 import { TickTockWaitInstance } from "../PACs/TickTockWaitInstance";
 
-test("e01ticktock", () => {
+test("e01.00.ticktock", () => {
     let clock: number = 0;
     let tick: ActionFn = () => { clock++; };
     let tock: ActionFn = () => { clock--; };
@@ -28,7 +28,7 @@ test("e01ticktock", () => {
     expect(clock).toBe(0);
 });
 
-test("e02ticktockmove", () => {
+test("e01.01.ticktockmove", () => {
     let clock: number = 0;
     let tick: ActionFn = () => { clock++; };
     let tock: ActionFn = () => { clock--; };
@@ -47,7 +47,7 @@ test("e02ticktockmove", () => {
     expect(clock).toBe(4);
 });
 
-test("e03ticktockhalt", () => {
+test("e01.02.ticktockhalt", () => {
     let clock: number = 0;
     let tick: ActionFn = () => { clock++; };
     let tock: ActionFn = () => { clock--; };
@@ -68,7 +68,7 @@ test("e03ticktockhalt", () => {
     expect(tickTock._tick()).toBe(false);
 });
 
-test("e04ticktockstop", () => {
+test("e01.03.ticktockstop", () => {
     let clock: number = 0;
     let tick: ActionFn = () => { clock++; };
     let tock: ActionFn = () => { clock--; };
@@ -89,7 +89,7 @@ test("e04ticktockstop", () => {
     expect(tickTock._tick()).toBe(true);
 });
 
-test("e05ticktockself", () => {
+test("e01.04.ticktockself", () => {
     let clock: number = 0;
     let tick: ActionFn = () => { clock++; };
     let tock: ActionFn = () => { clock--; };
@@ -108,7 +108,7 @@ test("e05ticktockself", () => {
     expect(clock).toBe(-2);
 });
 
-test("e06ticktockselfapi", () => {
+test("e01.05.ticktockselfapi", () => {
     let clock: number = 0;
     let tick: ActionFn = () => { clock++; };
     let tock: ActionFn = () => { clock--; };
@@ -127,7 +127,7 @@ test("e06ticktockselfapi", () => {
     expect(clock).toBe(-2);
 });
 
-test("e07ticktockwait", () => {
+test("e01.06.ticktockwait", () => {
     let tick: ActionFn = () => { TickTockWait._counter++;  };
     let tock: ActionFn = () => { TickTockWait._counter--; };
     TickTockWait._initAction = tick;
@@ -148,14 +148,14 @@ test("e07ticktockwait", () => {
     expect(tickTock._terminated).toBe(true);
 });
 
-test("e08ticktockwaitinstance", () => {
+test("e01.07.ticktockwaitinstance", () => {
     const tickTock = new TickTockWaitInstance();
     
     let tick: ActionFn = () => { tickTock._counter++;  };
     let tock: ActionFn = () => { tickTock._counter--; };
     tickTock._initAction = tick;
     tickTock._tockAction = tock;
-    
+
     tickTock._reset();
     
     tickTock._tick();
