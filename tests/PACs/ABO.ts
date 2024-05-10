@@ -23,5 +23,4 @@ export class ABO extends PragmaticActionChart {
             () => { return this._outputO(); }
         );
     }
-
 }

@@ -12,7 +12,7 @@ export class ABRO extends PragmaticActionChart {
 
     public awaitAB(): LocationFn {
         return this._forkI(
-            this._if(this._inputR, () => this.awaitAB()),
+            () => this._if(this._inputR, () => this.awaitAB()),
             () => this.doneAB(),
             new Await(this._inputA),
             new Await(this._inputB),
@@ -22,8 +22,7 @@ export class ABRO extends PragmaticActionChart {
     public doneAB(): LocationFn {
         return this._location(
             () => { return this._outputO(); },
-            this._if(this._inputR, () => this.awaitAB())()
+            this._if(this._inputR, () => this.awaitAB())
         );
     }
-
 }

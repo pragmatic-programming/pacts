@@ -156,8 +156,8 @@ export class PragmaticActionChart {
         };
     }
     
-    protected _if(condition: () => boolean, then: ControlFn): () => ControlFn {
-        return () => condition() ? () => then() : this._pause();
+    protected _if(condition: () => boolean, then: ControlFn): ControlFn {
+        return condition() ? () => then() : this._pause();
     }
 
     protected _fork(
