@@ -144,7 +144,7 @@ test("e01.06.ticktockwait", () => {
     expect(TickTockWait._counter).toBe(2);
     tickTock._tick();
 
-    expect(tickTock._terminated).toBe(true);
+    expect(tickTock._terminated()).toBe(true);
 });
 
 test("e01.07.ticktockwaitinstance", () => {
@@ -167,5 +167,5 @@ test("e01.07.ticktockwaitinstance", () => {
     expect(tickTock._counter).toBe(2);
     tickTock._tick();
 
-    expect(tickTock._terminated).toBe(true);
+    expect(tickTock._terminated()).toBe(true);
 });

@@ -16,8 +16,8 @@ export class PragmaticActionChart {
     protected _locationNames: string[] = [];
     protected _current: LocationFn = null;
     protected _initialized: boolean = false;
-    
-    public _terminated: boolean = false;
+
+    public _status: string = "";
     public _tickCallback: (() => void) | undefined = undefined;
 
     constructor() {
@@ -62,25 +62,29 @@ export class PragmaticActionChart {
         }
 
         this._current = this._location(this._noAction, () => this._locations[0]);
-        this._terminated = false;
+        this._status = "";
         this._initialized = true;
     }
 
-    public _tick(callback: (() => void) | undefined = () => this._tickCallback): boolean {
+    public _terminated(): boolean {
+        return this._status != "";
+    }
+
+    public _tick(callback: (() => void) | undefined = undefined): boolean {
         if (!this._initialized) {
             this._reset();
         }
 
-        if (callback) {
-            callback();
-        }
+        if (callback) callback();
+        if (this._tickCallback) this._tickCallback();
+        
 
         const targetLocation: LocationFn = this._current!()[1]();
         const locationFn: LocationFn = targetLocation;
         if (locationFn === null) {
-            return !this._terminated;
+            return !this._terminated();
         }
-        if (this._terminated) {
+        if (this._terminated()) {
             return false;
         }
         
@@ -149,9 +153,9 @@ export class PragmaticActionChart {
         return () => this._defer(this._locations[0]);
     }
 
-    protected _term(): ControlFn {
+    protected _term(exitcode: string = "terminated"): ControlFn {
         return () => {
-            this._terminated = true;
+            this._status = exitcode;
             return null;
         };
     }
@@ -178,7 +182,7 @@ export class PragmaticActionChart {
 
             var term = true;
             for (let loc of locations) {
-                if (!loc._terminated) {
+                if (!loc._terminated()) {
                     term = false;
                     break;
                 }
@@ -208,7 +212,7 @@ export class PragmaticActionChart {
 
             var term = true;
             for (let loc of locations) {
-                if (!loc._terminated) {
+                if (!loc._terminated()) {
                     term = false;
                     break;
                 }
@@ -217,4 +221,5 @@ export class PragmaticActionChart {
         }
         return this._location(action, forkControl);
     }
+
 }
