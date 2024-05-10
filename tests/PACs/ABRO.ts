@@ -3,25 +3,19 @@ import { Await } from "./Await";
 
 export class ABRO extends PragmaticActionChart {
 
-    protected _inputA: () => boolean;
-    protected _inputB: () => boolean;
-    protected _inputR: () => boolean;
-    protected _outputO: () => void;
-
-    constructor(inputA: () => boolean, inputB: () => boolean, inputR: () => boolean, outputO: () => void) {
+    constructor(readonly _inputA: () => boolean, 
+                readonly _inputB: () => boolean, 
+                readonly _inputR: () => boolean, 
+                readonly _outputO: () => void) {
         super();
-        this._inputA = inputA;
-        this._inputB = inputB;
-        this._inputR = inputR;
-        this._outputO = outputO;
     }
 
     public awaitAB(): LocationFn {
         return this._forkI(
             this._if(this._inputR, () => this.awaitAB()),
             () => this.doneAB(),
-            new Await(this._inputA, () => { }),
-            new Await(this._inputB, () => { }),
+            new Await(this._inputA),
+            new Await(this._inputB),
         );
     }
 

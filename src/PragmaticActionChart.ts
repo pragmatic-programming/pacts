@@ -24,11 +24,6 @@ export class PragmaticActionChart {
         if (!("_tick" in this)) {
             throw new Error("PragmaticActionClass requires a tick method");
         }
-
-        // This will only prepare static locations. 
-        // Works fine as long as only static code is used. 
-        // If you want to use instance code, call reset() after the constructor.
-        // this._reset();
     }
 
     protected _inferLocations(): void {
