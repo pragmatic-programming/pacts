@@ -12,10 +12,10 @@ export class PragmaticActionChart {
         "_fork", "_forkI"];
     protected static _ignorePrefix: string[] = ["_"];
 
-    protected _locations: LocationFn[] = [];
-    protected _locationNames: string[] = [];
-    protected _current: LocationFn = null;
-    protected _initialized: boolean = false;
+    public _locations: LocationFn[] = [];
+    public _locationNames: string[] = [];
+    public _current: LocationFn = null;
+    public _initialized: boolean = false;
 
     public _status: string = "";
     public _tickCallback: (() => void) | undefined = undefined;
@@ -26,7 +26,7 @@ export class PragmaticActionChart {
         }
     }
 
-    protected _inferLocations(): void {
+    public _inferLocations(): void {
         this._locations = [];
         let proto = Object.getPrototypeOf(this);
         let protoParent = Object.getPrototypeOf(proto);
@@ -104,19 +104,19 @@ export class PragmaticActionChart {
         return locations;
     }
 
-    protected _location(action: ActionFn, control: ControlFn): LocationFn {
+    public _location(action: ActionFn, control: ControlFn): LocationFn {
         return () => [action, control];
     }
 
-    protected _action(action: ActionFn): LocationFn {
+    public _action(action: ActionFn): LocationFn {
         return this._location(action, this._root());
     }
 
-    protected _control(location: ControlFn): LocationFn {
+    public _control(location: ControlFn): LocationFn {
         return this._location(this._noAction, location);
     }
     
-    protected _delegate(location: LocationFn): LocationFn {
+    public _delegate(location: LocationFn): LocationFn {
         if (location === null) {
             throw new Error("defer requires a valid location!");
         }
@@ -129,42 +129,42 @@ export class PragmaticActionChart {
         return deferControl;
     }
 
-    protected _defer(location: LocationFn): LocationFn {
+    public _defer(location: LocationFn): LocationFn {
         return this._delegate(location);
     }
 
-    protected _transition(location: LocationFn): ControlFn {
+    public _transition(location: LocationFn): ControlFn {
         return () => location;
     }
 
-    protected _noAction(): ActionFn {
+    public _noAction(): ActionFn {
         return () => {};
     }
 
-    protected _pause(): ControlFn {
+    public _pause(): ControlFn {
         return () => null; 
     }
 
-    protected _self(): ControlFn {
+    public _self(): ControlFn {
         return () => this._current;
     }
 
-    protected _root(): ControlFn {
+    public _root(): ControlFn {
         return () => this._defer(this._locations[0]);
     }
 
-    protected _term(exitcode: string = "terminated"): ControlFn {
+    public _term(exitcode: string = "terminated"): ControlFn {
         return () => {
             this._status = exitcode;
             return null;
         };
     }
     
-    protected _if(condition: () => boolean, then: ControlFn): ControlFn {
+    public _if(condition: () => boolean, then: ControlFn): ControlFn {
         return condition() ? () => then() : this._pause();
     }
 
-    protected _fork(
+    public _fork(
         control: ControlFn, 
         join: LocationFn, 
         ...locations: PragmaticActionChart[]): LocationFn 
@@ -192,9 +192,9 @@ export class PragmaticActionChart {
         return this._location(action, forkControl);
     }
 
-    protected _forkI(
+    public _forkI(
         control: () => ControlFn, 
-        join: ControlFn, 
+        join: () => ControlFn, 
         ...locations: PragmaticActionChart[]): LocationFn 
     {
         const action: ActionFn = () => {
@@ -217,9 +217,16 @@ export class PragmaticActionChart {
                     break;
                 }
             }
-            return term ? join() : null;
+            return term ? join()() : null;
         }
         return this._location(action, forkControl);
     }
 
+    public _immediate(location: () => LocationFn): ControlFn {
+        const locFn = location()!;
+        const loc = locFn();
+        loc[0]();
+        this._current = locFn;
+        return loc[1];
+    }
 }

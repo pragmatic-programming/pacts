@@ -12,7 +12,7 @@ export class ABO extends PragmaticActionChart {
     public awaitAB(): LocationFn {
         return this._forkI(
             () => this._pause(),
-            () => this.doneAB(),
+            () => () => this.doneAB(),
             new Await(this._inputA),
             new Await(this._inputB),
         );
