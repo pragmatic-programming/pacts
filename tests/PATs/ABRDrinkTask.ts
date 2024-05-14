@@ -30,25 +30,29 @@ export class ABRDrinkTask extends PragmaticActionTree {
             () => this._if(this._inputR, () => this.awaitAB()), 
             () => this._pause(),
             () => this._term(),
-            this.Fridge,
-            this.Drink);
+            this.Fridge(),
+            this.Drink());
     }
 
-    protected Fridge = new class extends PragmaticActionTree {
-        public fridgeDoorOpen(): LocationFn {
-            return this._selector(
-                () => this._pause(), 
-                new Callback(ABRDrinkTask.FridgeOpenCallback, "failure"),
-                new Callback(ABRDrinkTask.OpenFridgeCallback, "success"));
+    protected Fridge(): PragmaticActionTree {
+        return new class extends PragmaticActionTree {
+            public fridgeDoorOpen(): LocationFn {
+                return this._selector(
+                    () => this._pause(), 
+                    new Callback(ABRDrinkTask.FridgeOpenCallback, "failure"),
+                    new Callback(ABRDrinkTask.OpenFridgeCallback, "success"));
+            }
         }
    }
    
-   protected Drink = new class extends PragmaticActionTree {
-        public doDrink(): LocationFn {
-            return this._sequence(
-                () => this._pause(), 
-                new Callback(ABRDrinkTask.DrinkCallback, "success"),
-                new Callback(ABRDrinkTask.CloseFridgeCallback, "success"));
+   protected Drink(): PragmaticActionTree {
+        return new class extends PragmaticActionTree {
+            public doDrink(): LocationFn {
+                return this._sequence(
+                    () => this._pause(), 
+                    new Callback(ABRDrinkTask.DrinkCallback, "success"),
+                    new Callback(ABRDrinkTask.CloseFridgeCallback, "success"));
+            }
         }
    }
 

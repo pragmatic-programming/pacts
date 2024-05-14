@@ -27,7 +27,7 @@ test("e05.01.ABRDrinkTask.00", () => {
     var testDrink: boolean = false;
     var testCloseFridge: boolean = false;
 
-    ABRDrinkTask.CloseFridgeCallback = () => { testCloseFridge = true; console.log("CloseFridgeCallback")};
+    ABRDrinkTask.CloseFridgeCallback = () => { testCloseFridge = true; };
     ABRDrinkTask.DrinkCallback = () => { testDrink = true };
     ABRDrinkTask.OpenFridgeCallback = () => { testOpenFridge = true };
     ABRDrinkTask.FridgeOpenCallback = () => { testFridgeOpen = true };
@@ -50,4 +50,46 @@ test("e05.01.ABRDrinkTask.00", () => {
     // testCloseFridge = false;
     pat._tick();
     // expect(testCloseFridge).toBe(true);
+});
+
+
+test("e05.01.ABRDrinkTask.00", () => {
+    var A: boolean = false;
+    var B: boolean = false;
+    var R: boolean = false;
+
+    var testFridgeOpen: number = 0;
+    var testOpenFridge: number = 0;
+    var testDrink: number = 0;
+    var testCloseFridge: number = 0;
+
+    ABRDrinkTask.CloseFridgeCallback = () => { testCloseFridge++; console.log("CloseFridgeCallback")};
+    ABRDrinkTask.DrinkCallback = () => { testDrink++ };
+    ABRDrinkTask.OpenFridgeCallback = () => { testOpenFridge++ };
+    ABRDrinkTask.FridgeOpenCallback = () => { testFridgeOpen++ };
+    
+    const dtABRO = new ABRDrinkTask(
+        () => { return A }, 
+        () => { return B },
+        () => { return R }
+    );
+
+    dtABRO._tick();
+    expect(dtABRO._terminated()).toBe(false);
+
+    A = true;
+    dtABRO._tick();
+    expect(dtABRO._terminated()).toBe(false);
+
+    B = true;
+    dtABRO._tick();
+    expect(dtABRO._terminated()).toBe(false);
+
+    R = true;
+    dtABRO._tick(() => console.log(`A: ${A}, B: ${B}, R: ${R}`));
+    expect(dtABRO._terminated()).toBe(false);
+
+    R = false;
+    dtABRO._tick(() => console.log(`A: ${A}, B: ${B}, R: ${R}`));
+    expect(dtABRO._terminated()).toBe(false);
 });
