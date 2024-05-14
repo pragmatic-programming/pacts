@@ -9,33 +9,18 @@ export class PragmaticActionTree extends PragmaticActionChart {
         control: () => ControlFn, 
         ...locations: PragmaticActionChart[]): LocationFn 
     {
-        const action: ActionFn = () => {
-            for (let loc of locations) {
-                loc._tick();
-            }
-        };
-        const forkControl: ControlFn = () => {
-            const superControl: LocationFn = control()();
-            if (superControl !== null) {
-                return superControl;
-            }
-
-            for (let loc of locations) {
-                loc._tick();
-                const term = loc._status;
-                if (!term) {
-                    return null;
-                } else if (term === PragmaticActionTree.SUCCESS) {
-                    return this._term(PragmaticActionTree.SUCCESS)();
-                }
-            }
-            return this._term(PragmaticActionTree.FAILURE)();
-        }
-        return this._location(action, forkControl);
+        return this._selectorCtrl(
+            control, 
+            () => this._term(PragmaticActionTree.SUCCESS), 
+            () => this._term(PragmaticActionTree.FAILURE), 
+            ...locations
+        );
     }
 
-    public _sequence(
+    public _selectorCtrl(
         control: () => ControlFn, 
+        success: () => ControlFn,
+        failure: () => ControlFn,
         ...locations: PragmaticActionChart[]): LocationFn 
     {
         const action: ActionFn = () => {
@@ -54,16 +39,28 @@ export class PragmaticActionTree extends PragmaticActionChart {
                 const term = loc._status;
                 if (!term) {
                     return null;
-                } else if (term === PragmaticActionTree.FAILURE) {
-                    return this._term(PragmaticActionTree.FAILURE)();
+                } else if (term === PragmaticActionTree.SUCCESS) {
+                    return success()();
                 }
             }
-            return this._term(PragmaticActionTree.SUCCESS)();
+            return failure()();
         }
         return this._location(action, forkControl);
     }
 
-    public _sequenceControl(
+    public _sequence(
+        control: () => ControlFn, 
+        ...locations: PragmaticActionChart[]): LocationFn 
+    {
+        return this._sequenceCtrl(
+            control, 
+            () => this._term(PragmaticActionTree.SUCCESS), 
+            () => this._term(PragmaticActionTree.FAILURE), 
+            ...locations
+        );
+    }
+
+    public _sequenceCtrl(
         control: () => ControlFn, 
         success: () => ControlFn,
         failure: () => ControlFn,

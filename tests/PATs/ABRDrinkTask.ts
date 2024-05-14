@@ -26,7 +26,7 @@ export class ABRDrinkTask extends PragmaticActionTree {
     }
 
     public doneAB(): LocationFn {
-        return this._sequenceControl(
+        return this._sequenceCtrl(
             () => this._if(this._inputR, () => this.awaitAB()), 
             () => this._pause(),
             () => this._term(),
